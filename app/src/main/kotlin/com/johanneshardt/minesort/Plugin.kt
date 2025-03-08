@@ -25,14 +25,22 @@ class Plugin : JavaPlugin(), Listener {
     @EventHandler(ignoreCancelled = true)
     fun onInventoryClick(event: InventoryClickEvent) {
         val player = event.whoClicked
+        /* many interactables (for example anvils) count as inventories themselves,
+           but also allow access to the player inventory in the bottom half of the ui. By checking
+           .clickedInventory (instead of event.inventory) we still allow for sorting in that case! */
         val inventory = event.clickedInventory
 
         if (event.click == ClickType.DOUBLE_CLICK && inventory != null) {
-            val inventoryType = inventory.type
-            val inventoryName = inventoryType.defaultTitle()
+            val inventoryName = inventory.type.defaultTitle()
 
             when (inventory.type) {
-                InventoryType.CHEST, InventoryType.ENDER_CHEST, InventoryType.SHULKER_BOX, InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.HOPPER, InventoryType.BARREL -> {
+                InventoryType.CHEST,
+                InventoryType.ENDER_CHEST,
+                InventoryType.SHULKER_BOX,
+                InventoryType.DISPENSER,
+                InventoryType.DROPPER,
+                InventoryType.HOPPER,
+                InventoryType.BARREL -> {
                     inventory.sort()
                     player.sendMessage(inventoryName.append(Component.text(" was sorted!")).color(NamedTextColor.GREEN))
                 }
@@ -45,14 +53,7 @@ class Plugin : JavaPlugin(), Listener {
                     }
                 }
 
-                else -> {
-                    this.componentLogger.debug(
-                        Component
-                            .text("Player tried to sort a '")
-                            .append(inventoryName)
-                            .append(Component.text("', which is not possible."))
-                    )
-                }
+                else -> {}
             }
         }
     }
@@ -100,11 +101,11 @@ fun combineStacks(stacks: List<ItemStack>): List<ItemStack> {
     return combined
 }
 
-// getItemMeta() is only null for Material.AIR as far as I know,
-// but we handle it just in case.
+// getItemMeta() is only null for Material.AIR as far as I know, but we handle it just in case.
 val itemStackOrder = compareByDescending<ItemStack> { it.type.isSolid }
     .thenByDescending { it.type.isBlock } // then blocks
-    .thenBy { EnchantmentTarget.ALL.includes(it) || it.type == Material.ENCHANTED_BOOK } // check if item is enchantable
+    .thenBy { EnchantmentTarget.ALL.includes(it) } // check if item is enchantable
+    .thenBy { it.type == Material.ENCHANTED_BOOK } // enchanted books at the end
     .thenByDescending { it?.itemMeta?.enchants?.size }  // sort by number of enchantments
     .thenBy(nullsLast<String>()) {
         (it?.itemMeta as? EnchantmentStorageMeta)?.storedEnchants?.entries?.firstOrNull()?.let { (enchantment, level) ->
