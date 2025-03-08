@@ -4,7 +4,7 @@ A small plugin for [paper-based](https://papermc.io/) minecraft servers. It allo
 inventories. 
 
 ## Functionality
-Players can double-click a chest (or their inventory) to sort it. The plugin will also try to combine stacks of 
+Players can double-click a slot inside a chest (or their inventory) to sort it. The plugin will also try to combine stacks of 
 item if there's space left. When sorting inventories, the hotbar/armor/crafting area/left hand slots are all ignored.
 
 ## Compatibility
