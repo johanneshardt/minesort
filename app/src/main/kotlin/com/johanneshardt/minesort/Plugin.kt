@@ -106,9 +106,9 @@ val itemStackOrder = compareByDescending<ItemStack> { it.type.isSolid }
     .thenByDescending { it.type.isBlock } // then blocks
     .thenBy { EnchantmentTarget.ALL.includes(it) } // check if item is enchantable
     .thenBy { it.type == Material.ENCHANTED_BOOK } // enchanted books at the end
-    .thenByDescending { it?.itemMeta?.enchants?.size }  // sort by number of enchantments
+    .thenByDescending { it.itemMeta?.enchants?.size }  // sort by number of enchantments
     .thenBy(nullsLast<String>()) {
-        (it?.itemMeta as? EnchantmentStorageMeta)?.storedEnchants?.entries?.firstOrNull()?.let { (enchantment, level) ->
+        (it.itemMeta as? EnchantmentStorageMeta)?.storedEnchants?.entries?.firstOrNull()?.let { (enchantment, level) ->
             PlainTextComponentSerializer.plainText().serialize(enchantment.displayName(level))
         }
     } // sort books by enchant name
