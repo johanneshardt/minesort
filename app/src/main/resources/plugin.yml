@@ -1,5 +1,5 @@
 name: minesort
-version: 0.3.0
+version: 0.4.0
 main: com.johanneshardt.minesort.Plugin
 description: A plugin to allow players on a paper server to sort their inventories or chests in the world.
 author: johanneshardt
